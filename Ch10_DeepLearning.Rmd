@@ -158,8 +158,11 @@ Consider the simple function $R(\beta) = sin(\beta) + \beta/10$.
 (a) Draw a graph of this function over the range $\beta \in [−6, 6]$.
 Your code:
 ```{r,echo=TRUE}
-#
-#
+R <- function(beta) {sin(beta) + beta / 10}
+beta_range <- seq(-6, 6, length.out = 400)
+R_values <- R(beta_range)
+
+plot(beta_range, R_values)
 ```
 
 
@@ -167,8 +170,9 @@ Your code:
 
 Your code:
 ```{r,echo=TRUE}
-#
-#
+
+print("dR/dβ = cos(β) + 0.1")
+
 ```
 
 Your answer:
@@ -176,15 +180,43 @@ Your answer:
 ~~~
 Please write your answer in full sentences.
 
-
+dR/dβ = cos(β) + 0.1
 ~~~
 
 (c) Given $\beta_0 = 2.3$, run gradient descent to find a local minimum of $R(\beat)$ using a learning rate of $\rho= 0.1$. Show each of $\beta_0,\beta_1,\dots$ in your plot, as well as the final answer.
 
 Your code:
 ```{r,echo=TRUE}
-#
-#
+beta_0 = 2.3
+rho = 0.1
+iterations <- 20 
+
+beta_values <- numeric(iterations + 1)
+beta_values[1] <- beta_0
+
+# Perform gradient descent
+for (i in 1:iterations) {
+  beta_prev <- beta_values[i]
+  # Update beta based on the gradient of R at beta_prev
+  beta_new <- beta_prev - rho * dR_dbeta(beta_prev)
+  beta_values[i + 1] <- beta_new
+}
+
+# Compute R(beta) for the updated beta values
+R_beta_values <- R(beta_values)
+
+# Plot the original function
+{plot(beta_range, R_values, type = "l", col = "blue", 
+     main = "Gradient Descent on R(beta) = sin(beta) + beta/10",
+     xlab = "beta", ylab = "R(beta)",
+     lwd = 2)
+grid()
+
+# Add the gradient descent path
+points(beta_values, R_beta_values, col = "red", pch = 19)}
+
+# Print the final beta value
+print(paste("Final beta:", beta_values[length(beta_values)]))
 ```
 
 Your answer:
@@ -199,8 +231,34 @@ Please write your answer in full sentences.
 
 Your code:
 ```{r,echo=TRUE}
-#
-#
+beta_0 = 1.4
+rho = 0.1
+iterations <- 20 
+
+beta_values <- numeric(iterations + 1)
+beta_values[1] <- beta_0
+
+# Perform gradient descent
+for (i in 1:iterations) {
+  beta_prev <- beta_values[i]
+  # Update beta based on the gradient of R at beta_prev
+  beta_new <- beta_prev - rho * dR_dbeta(beta_prev)
+  beta_values[i + 1] <- beta_new
+}
+
+# Compute R(beta) for the updated beta values
+R_beta_values <- R(beta_values)
+
+# Plot the original function
+{plot(beta_range, R_values, type = "l", col = "blue", 
+     main = "Gradient Descent on R(beta) = sin(beta) + beta/10",
+     xlab = "beta", ylab = "R(beta)",
+     lwd = 2)
+grid()
+
+# Add the gradient descent path
+points(beta_values, R_beta_values, col = "red", pch = 19)}
+
 ```
 
 Your answer:
@@ -217,8 +275,36 @@ Fit a neural network to the Default data. Use a single hidden layer with 10 unit
 
 Your code:
 ```{r,echo=TRUE}
-#
-#
+library(remotes)
+library(tensorflow)
+
+accuracy <- function(pred, truth) {
+   mean(drop(as.numeric(pred)) == drop(truth)) }
+modelnn %>% predict(x_test) %>% k_argmax() %>% accuracy(g_test)
+
+modellr <- keras_model_sequential() %>%
+   layer_dense(input_shape = 784, units = 10,
+       activation = "softmax")
+summary(modellr)
+
+
+modnn <- nn_module(
+  initialize = function(input_size) {
+    self$hidden <- nn_linear(input_size, 10)
+    self$activation <- nn_relu()
+    self$dropout <- nn_dropout(0.4)
+    self$output <- nn_linear(50, 1)
+  },
+  forward = function(x) {
+    x %>% 
+      self$hidden() %>% 
+      self$activation() %>% 
+      self$dropout() %>% 
+      self$output()
+  }
+)
+
+
 ```
 
 Your answer:
@@ -228,6 +314,10 @@ Please write your answer in full sentences.
 
 
 ~~~
+
+
+l = f(theta|x) = 10 C 4 * theta^4 * (1-theta)^6 
+
 
 ### IMDb
 
